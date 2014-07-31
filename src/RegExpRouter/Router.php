@@ -87,10 +87,19 @@ class Router
             );
         }
         
+        $path = parse_url($this->baseURL, PHP_URL_PATH);
+        
+        if ($path == false //Protocol agnostic URLs will return a path of 'false' if the base url only contains a '/' for the path
+            && strpos($this->baseURL, '//') === 0 //Make sure it is protocol agnostic
+            && substr($this->baseURL, -1) == '/') //Make sure the base url actually ends with a '/' for the path
+        {
+            $path = '/';
+        }
+        
         // Trim the base part of the URL
         $requestURI = substr(
             $requestURI,
-            strlen(parse_url($this->baseURL, PHP_URL_PATH))
+            strlen($path)
         );
         
         /**
